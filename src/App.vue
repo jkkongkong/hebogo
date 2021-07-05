@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-05-17 17:09:17
- * @LastEditTime: 2021-06-28 18:44:21
+ * @LastEditTime: 2021-07-05 09:15:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \vue2-bucket\src\App.vue
@@ -13,7 +13,6 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-require("@/assets/iconfont/iconfont.css");
 export default Vue.extend({
   name: "App",
   data() {

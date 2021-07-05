@@ -1,12 +1,5 @@
-<!--
- * @Author: your name
- * @Date: 2021-05-25 16:07:03
- * @LastEditTime: 2021-05-26 10:34:02
- * @LastEditors: your name
- * @Description: In User Settings Edit
- * @FilePath: \ewp_contentoperation\README.md
--->
-# 内容运营
+
+# 火爆狗
 
 ## Project setup
 ```
