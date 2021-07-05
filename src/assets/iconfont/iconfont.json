@@ -1,0 +1,44 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "226407",
+      "name": "推荐",
+      "font_class": "tuijian",
+      "unicode": "e6be",
+      "unicode_decimal": 59070
+    },
+    {
+      "icon_id": "522708",
+      "name": "icon_sort_recommend",
+      "font_class": "iconsortrecommend",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "749772",
+      "name": "推荐",
+      "font_class": "tuijian1",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "1440917",
+      "name": "推荐",
+      "font_class": "tuijian2",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "4933555",
+      "name": "recommend",
+      "font_class": "recommend",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    }
+  ]
+}

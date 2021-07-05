@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mappings>
+	 <!-- 标签管理 -->
+	<mapping id="AP201WC28-request" parser="bean2TextParser" transformer="bean2TextTransformer">
+    <template>
+      <![CDATA[<#include "message-header" />
+        <ENTITY>
+          <Data_Cntnt>${'\l'}![CDATA[${(data)!}]]${'\g'}</Data_Cntnt>
+        </ENTITY>
+        <#include "message-footer" />
+      ]]>
+    </template>
+  </mapping>
+  <mapping id="A4071SBC1-request" parser="bean2TextParser" transformer="bean2TextTransformer">
+    <template>
+      <![CDATA[<#include "message-header" />
+        <ENTITY>
+          <Parm_CfgLb_Val>${'\l'}![CDATA[${(Parm_CfgLb_Val)!}]]${'\g'}</Parm_CfgLb_Val>
+        </ENTITY>
+        <#include "message-footer" />
+      ]]>
+    </template>
+  </mapping>
+  <mapping id="A4071SBH1-request" parser="bean2TextParser" transformer="bean2TextTransformer">
+    <template>
+      <![CDATA[<#include "message-header" />
+        <ENTITY>
+          <Parm_CfgLb_Val>${'\l'}![CDATA[${(Parm_CfgLb_Val)!}]]${'\g'}</Parm_CfgLb_Val>
+        </ENTITY>
+        <#include "message-footer" />
+      ]]>
+    </template>
+  </mapping>
+</mappings>

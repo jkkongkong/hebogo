@@ -1,0 +1,35 @@
+{
+	"appId":"202105281288",
+	"name":"内容运营",
+	"manifestVersion":"0.0.1",
+	"views":[
+		{
+			"name":"main",
+			"path":"index.html"
+		},
+		{
+			"name":"home-plugin",
+			"path":"index.html"
+		}
+	],
+	"outboundServices":[
+		{
+			"id":"AP201WC28",
+			"transactionId":"AP201WC28",
+			"requestMappingId":"AP201WC28-request",
+			"responseMappingId":"p2XmlFull2Map"
+		},
+    {
+			"id":"A4071SBC1",
+			"transactionId":"A4071SBC1",
+			"requestMappingId":"A4071SBC1-request",
+			"responseMappingId":"p2XmlFull2Map"
+		},
+    {
+			"id":"A4071SBH1",
+			"transactionId":"A4071SBH1",
+			"requestMappingId":"A4071SBH1-request",
+			"responseMappingId":"p2XmlFull2Map"
+		}
+	]
+}
