@@ -1,5 +1,4 @@
-
-# 火爆狗
+# hbg
 
 ## Project setup
 ```
