@@ -3,31 +3,13 @@
     <div class="content-box">
       <div class="rule-head">
         <span class="title">规则列表</span>
-        <el-button size="mini" @click="createRule" round icon="el-icon-plus"
-          >新建规则</el-button
-        >
+        <el-button size="mini" @click="createRule" round icon="el-icon-plus">新建规则</el-button>
       </div>
       <div class="actions">
-        <el-input
-          placeholder="规则名称/编号"
-          v-model.trim="keyWord"
-          class="input-with-select item"
-          size="mini"
-          :maxlength="30"
-          @keyup.enter.native="searchRules"
-        >
-          <el-button
-            slot="append"
-            icon="el-icon-search"
-            @click="searchRules"
-          ></el-button>
+        <el-input placeholder="规则名称/编号" v-model.trim="keyWord" class="input-with-select item" size="mini" :maxlength="30" @keyup.enter.native="searchResource">
+          <el-button slot="append" icon="el-icon-search" @click="searchResource"></el-button>
         </el-input>
-        <el-tooltip
-          effect="light"
-          :open-delay="500"
-          content="规则状态"
-          placement="top"
-        >
+        <el-tooltip effect="light" :open-delay="500" content="规则状态" placement="top">
           <el-select
             v-model="status"
             size="mini"
@@ -38,38 +20,21 @@
               }
             "
           >
-            <el-option
-              v-for="item in statusOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
+            <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-tooltip>
-        <el-tooltip
-          effect="light"
-          :open-delay="500"
-          content="规则类型"
-          placement="top"
-        >
+        <el-tooltip effect="light" :open-delay="500" content="规则类型" placement="top">
           <el-select
             v-model="type"
             size="mini"
             class="item"
             @visible-change="
-              (status) => {
-                changeSelectLabe(status, typeOptions, '规则类型');
+              (type) => {
+                changeSelectLabe(type, typeOptions, '规则类型');
               }
             "
           >
-            <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
+            <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-tooltip>
         <!-- <el-tooltip effect="light" :open-delay="500" content="所属板块" placement="top">
@@ -86,146 +51,57 @@
             <el-option v-for="item in plateOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-tooltip> -->
-        <el-button
-          type="primary"
-          size="mini"
-          class="query-btn item"
-          @click="searchRules"
-          >查询</el-button
-        >
+        <el-button type="primary" size="mini" class="query-btn item" @click="searchResource">查询</el-button>
         <!-- <el-button size="mini" @click="batchExport">一键导出</el-button> -->
-        <el-button size="mini" @click="batchChangeStatus(1)"
-          >一键启用</el-button
-        >
-        <el-button size="mini" @click="batchChangeStatus(0)"
-          >一键停用</el-button
-        >
+        <el-button size="mini" @click="batchChangeStatus(1)">一键启用</el-button>
+        <el-button size="mini" @click="batchChangeStatus(0)">一键停用</el-button>
         <el-button size="mini" @click="batchDelete">一键删除</el-button>
       </div>
 
-      <el-table
-        :data="tableData"
-        ref="rulesTable"
-        @select="handleTableSelect"
-        @select-all="handleTableSelect"
-        current-row-key="pushRuleId"
-        row-key="pushRuleId"
-        style="width: 100%"
-      >
+      <el-table :data="tableData" ref="rulesTable" @select="handleTableSelect" @select-all="handleTableSelect" current-row-key="pushRuleId" row-key="pushRuleId" style="width: 100%">
         <el-table-column type="selection"> </el-table-column>
-        <el-table-column
-          prop="pushRuleId"
-          show-overflow-tooltip
-          label="规则编号"
-        >
-        </el-table-column>
-        <el-table-column prop="name" show-overflow-tooltip label="规则名称">
-        </el-table-column>
-        <el-table-column prop="status" label="规则状态" show-overflow-tooltip>
+        <el-table-column prop="id" show-overflow-tooltip label="编号"> </el-table-column>
+        <el-table-column prop="name" show-overflow-tooltip label="名称"> </el-table-column>
+        <el-table-column prop="status" label="状态" show-overflow-tooltip>
           <template slot-scope="scope">
-            <span>{{ ruleStatus[scope.row.status] }}</span>
+            <span>{{ statusMaps[scope.row.status] }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="description"
-          label="规则内容"
-          show-overflow-tooltip
-        >
-        </el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="创建时间"
-          show-overflow-tooltip
-        >
-        </el-table-column>
-        <el-table-column prop="pushCnt" show-overflow-tooltip label="推送次数">
+        <el-table-column prop="type" label="类型" show-overflow-tooltip>
           <template slot-scope="scope">
-            <span>{{ scope.row.pushCnt > 0 ? scope.row.pushCnt : 0 }}</span>
+            <span>{{ typeMaps[scope.row.type] }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="collectNum" show-overflow-tooltip label="收藏量">
+        <el-table-column prop="desc" label="简介" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="createDate" label="创建时间" show-overflow-tooltip>
           <template slot-scope="scope">
-            <span>{{
-              scope.row.collectNum > 0 ? scope.row.collectNum : 0
-            }}</span>
+            <span>{{ formatDate(scope.row.createDate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="forwardNum" show-overflow-tooltip label="转发量">
+        <el-table-column prop="sellCount" show-overflow-tooltip label="数量">
           <template slot-scope="scope">
-            <span>{{
-              scope.row.forwardNum > 0 ? scope.row.forwardNum : 0
-            }}</span>
+            <span>{{ scope.row.sellCount > 0 ? scope.row.sellCount : 0 }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="commentNum" show-overflow-tooltip label="评论量">
-          <template slot-scope="scope">
-            <span>{{
-              scope.row.commentNum > 0 ? scope.row.commentNum : 0
-            }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column prop="resourceUrl" show-overflow-tooltip label="链接"> </el-table-column>
+        <el-table-column prop="unzipPassword" show-overflow-tooltip label="解压密码"> </el-table-column>
+        <el-table-column prop="keyWord" show-overflow-tooltip label="关键词"> </el-table-column>
         <el-table-column width="130px" label="操作">
           <template slot-scope="scope">
-            <el-tooltip
-              effect="light"
-              :open-delay="500"
-              content="查看详情"
-              placement="top"
-            >
+            <el-tooltip effect="light" :open-delay="500" content="查看详情" placement="top">
+              <i class="action-item el-icon-zoom-in" @click="queryResourceDetails(scope.row)"></i>
+            </el-tooltip>
+            <el-tooltip effect="light" :open-delay="500" :content="scope.row.status == '1' || scope.row.status == '3' ? '停用' : '启用'" placement="top">
               <i
-                class="action-item el-icon-zoom-in"
-                @click="queryRuleDetails(scope.row)"
+                :class="scope.row.status == '1' || scope.row.status == '3' ? 'action-item el-icon-video-pause' : 'action-item el-icon-video-play'"
+                @click="changeStatus(scope.row, scope.row.status == '1' || scope.row.status == '3' ? '0' : '1')"
               ></i>
             </el-tooltip>
-            <el-tooltip
-              effect="light"
-              :open-delay="500"
-              :content="
-                scope.row.status == '1' || scope.row.status == '3'
-                  ? '停用'
-                  : '启用'
-              "
-              placement="top"
-            >
-              <i
-                :class="
-                  scope.row.status == '1' || scope.row.status == '3'
-                    ? 'action-item el-icon-video-pause'
-                    : 'action-item el-icon-video-play'
-                "
-                @click="
-                  changeStatus(
-                    scope.row,
-                    scope.row.status == '1' || scope.row.status == '3'
-                      ? '0'
-                      : '1'
-                  )
-                "
-              ></i>
+            <el-tooltip effect="light" :open-delay="500" content="编辑" placement="top" v-show="scope.row.status == 0">
+              <i class="action-item el-icon-edit" @click="editRule(scope.row)"></i>
             </el-tooltip>
-            <el-tooltip
-              effect="light"
-              :open-delay="500"
-              content="编辑"
-              placement="top"
-              v-show="scope.row.status == '0' || scope.row.status == '3'"
-            >
-              <i
-                class="action-item el-icon-edit"
-                @click="editRule(scope.row)"
-              ></i>
-            </el-tooltip>
-            <el-tooltip
-              effect="light"
-              :open-delay="500"
-              content="删除"
-              placement="top"
-              v-show="scope.row.status == '0' || scope.row.status == '3'"
-            >
-              <i
-                class="action-item el-icon-delete"
-                @click="deleteResource(scope.row)"
-              ></i>
+            <el-tooltip effect="light" :open-delay="500" content="删除" placement="top" v-show="scope.row.status == 0">
+              <i class="action-item el-icon-delete" @click="deleteResource(scope.row)"></i>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -237,48 +113,44 @@
         :current-page="currentPage"
         :page-sizes="[10, 20, 40, 80]"
         :page-size="pageSize"
-        :layout="
-          isInFrame
-            ? 'total, prev, pager, next'
-            : 'total, sizes, prev, pager, next, jumper'
-        "
+        :layout="isInFrame ? 'total, prev, pager, next' : 'total, sizes, prev, pager, next, jumper'"
         small
         :total="total"
       >
       </el-pagination>
     </div>
     <EditResource :visible.sync="editVisible" v-if="editVisible"></EditResource>
+    <Details :visible.sync="resourceDetailsVisible" v-if="resourceDetailsVisible" :content="currentResource"></Details>
   </div>
 </template>
 
 <script>
 import EditResource from "@/views/resourceManage/EditResource.vue";
+import { queryResourceList } from "@/http/modules/resourceManage.js";
+import Details from "@/views/resourceManage/Details.vue";
+import { formatDate } from "@/utils/format.js";
 export default {
   name: "content-recommend",
   props: {},
   data() {
     return {
-      editRuleVisible: false,
-      ruleDetailsVisible: false,
-      typeOptions: [
-        { label: "规则类型", value: null },
-        { label: "资源规则", value: "0" },
-        { label: "场景规则", value: "1" },
-      ],
+      editResourceVisible: false,
+      resourceDetailsVisible: false,
       statusOptions: [
-        { label: "规则状态", value: null },
-        { label: "停用", value: "0" },
-        { label: "启用", value: "1" },
-        { label: "待停用", value: "2" },
-        { label: "待启用", value: "3" },
+        { label: "资源状态", value: null },
+        { label: "草稿", value: "0" },
+        { label: "已发布", value: "1" },
+        { label: "推荐", value: "2" },
       ],
-      plateOptions: [
-        { label: "所属板块", value: null },
-        { label: "课程", value: "1" },
-        { label: "微课", value: "2" },
-        { label: "电子书", value: "3" },
-        { label: "新闻资讯", value: "4" },
+      typeOptions: [
+        { label: "资源类型", value: null },
+        { label: "视频", value: "0" },
+        { label: "电子书", value: "1" },
+        { label: "自建资源", value: "2" },
+        { label: "微课", value: "3" },
       ],
+      statusMaps: { 0: "草稿", 1: "已发布", 2: "推荐" },
+      typeMaps: { 0: "视频", 1: "电子书", 2: "自建资源", 3: "微课" },
       keyWord: null,
       resourceType: null,
       tableData: [],
@@ -288,8 +160,8 @@ export default {
       status: null,
       type: null,
       rule_plate: null,
-      ruleStatus: [],
-      currentRuleId: null,
+      currentResourceId: null,
+      currentResource: null,
       isLoading: false,
       selectedResources: [],
       editVisible: false,
@@ -297,12 +169,13 @@ export default {
   },
   components: {
     EditResource,
+    Details,
   },
   created() {
     console.log(123);
   },
   mounted() {
-    this.searchRules();
+    this.searchResource();
   },
   computed: {
     isInFrame() {
@@ -312,14 +185,14 @@ export default {
   watch: {
     keyWord(cur, pre) {
       if (!cur && pre != null) {
-        this.searchRules();
+        this.searchResource();
       }
     },
   },
   methods: {
-    changeSelectLabe() {},
+    formatDate: formatDate,
     test() {
-      this.editRuleVisible = true;
+      this.editResourceVisible = true;
     },
     handleTableSelect(list) {
       this.selectedResources = [];
@@ -335,30 +208,16 @@ export default {
     handleSizeChange(size) {
       this.pageSize = size;
       this.currentPage = 1;
-      this.searchRules();
+      this.searchResource();
     },
     handleCurrentChange(page) {
       this.currentPage = page;
-      this.searchRules();
+      this.searchResource();
     },
-    searchRules() {
-      console.log(123);
-    },
-    /**
-     * @description: 回显列表数据
-     * @param {*}
-     * @return {*}
-     */
-    echoTableList() {
-      if (this.selectedResources.length && this.tableData.length) {
-        this.selectedResources.map((item) => {
-          this.tableData.map((tItem) => {
-            if (item.pushRuleId == tItem.pushRuleId) {
-              this.$refs.rulesTable.toggleRowSelection(tItem, true);
-            }
-          });
-        });
-      }
+    async searchResource() {
+      let re = await queryResourceList({ keyWord: this.keyWord, status: this.status, type: this.type, pageNum: this.currentPage, pageSize: this.pageSize });
+      this.tableData = re.list && re.list.length ? [...re.list] : [];
+      this.total = re.total;
     },
     selectHandler(status, list) {
       console.log(status);
@@ -374,16 +233,16 @@ export default {
      * @param {*} rule：规则对象
      * @return {*}
      */
-    editRule(rule) {
-      this.currentRuleId = rule.pushRuleId;
-      this.editRuleVisible = true;
+    editRule(resource) {
+      this.currentResourceId = resource.id;
+      this.editResourceVisible = true;
     },
     createRule() {
       this.editVisible = true;
     },
-    queryRuleDetails(rule) {
-      this.currentRuleId = rule.pushRuleId;
-      this.ruleDetailsVisible = true;
+    queryResourceDetails(resource) {
+      this.currentResource = resource;
+      this.resourceDetailsVisible = true;
     },
     deleteResource(node) {
       console.log(node);
@@ -421,15 +280,11 @@ export default {
         this.$message.warning("请至少选择一个规则!");
         return;
       }
-      this.$confirm(
-        `是否确认${status == "0" ? "停用" : "启用"}选中规则?`,
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      ).then(async () => {
+      this.$confirm(`是否确认${status == "0" ? "停用" : "启用"}选中规则?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
         console.log(123);
       });
     },

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-07-06 11:43:13
- * @LastEditTime: 2021-07-06 14:31:02
+ * @LastEditTime: 2021-07-15 17:37:40
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \hebogo\src\views\Home.vue
@@ -10,11 +10,7 @@
   <div class="home">
     <div class="nav">
       <i class="icon"></i>
-      <el-tabs
-        v-model="activeName"
-        @tab-click="handleClick"
-        class="nav-tab-header"
-      >
+      <el-tabs v-model="activeName" @tab-click="handleClick" class="nav-tab-header">
         <el-tab-pane label="资源管理" name="resourceManage"></el-tab-pane>
         <!-- <el-tab-pane label="测试" name="/test"></el-tab-pane> -->
       </el-tabs>
@@ -66,8 +62,7 @@ export default {
         height: 0;
         border-style: solid;
         border-width: 14px 0 14px 20px;
-        border-color: transparent transparent transparent
-          rgba(74, 144, 226, 0.5);
+        border-color: transparent transparent transparent rgba(74, 144, 226, 0.5);
       }
       &::after {
         content: "";
@@ -78,8 +73,7 @@ export default {
         height: 0;
         border-style: solid;
         border-width: 14px 0 14px 20px;
-        border-color: transparent transparent transparent
-          rgba(74, 144, 226, 0.5);
+        border-color: transparent transparent transparent rgba(74, 144, 226, 0.5);
       }
     }
     .nav-tab-header {

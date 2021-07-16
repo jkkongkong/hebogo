@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-05-17 19:22:53
- * @LastEditTime: 2021-07-06 12:01:29
+ * @LastEditTime: 2021-07-16 14:49:36
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \vue2-bucket\vue.config.ts
@@ -35,12 +35,7 @@ module.exports = {
     },
   },
   chainWebpack: (config) => {
-    config.resolve.alias
-      .set("@", resolve("src"))
-      .set("assets", resolve("src/assets"))
-      .set("components", resolve("src/components"))
-      .set("base", resolve("baseConfig"))
-      .set("public", resolve("public"));
+    config.resolve.alias.set("@", resolve("src")).set("assets", resolve("src/assets")).set("components", resolve("src/components")).set("base", resolve("baseConfig")).set("public", resolve("public"));
   },
   configureWebpack: {
     devtool: "source-map",
