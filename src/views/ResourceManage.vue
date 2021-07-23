@@ -1,9 +1,9 @@
 <template>
-  <div class="content-recommend" v-loading.fullscreen="isLoading">
+  <div class="resource-manage" v-loading.fullscreen="isLoading">
     <div class="content-box">
       <div class="rule-head">
         <span class="title">规则列表</span>
-        <el-button size="mini" @click="createRule" round icon="el-icon-plus">新建规则</el-button>
+        <el-button size="mini" @click="createResource" round icon="el-icon-plus">新建规则</el-button>
       </div>
       <div class="actions">
         <el-input placeholder="规则名称/编号" v-model.trim="keyWord" class="input-with-select item" size="mini" :maxlength="30" @keyup.enter.native="searchResource">
@@ -37,24 +37,9 @@
             <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-tooltip>
-        <!-- <el-tooltip effect="light" :open-delay="500" content="所属板块" placement="top">
-          <el-select
-            v-model="rule_plate"
-            size="mini"
-            class="item"
-            @visible-change="
-              (status) => {
-                changeSelectLabe(status, plateOptions, '所属板块');
-              }
-            "
-          >
-            <el-option v-for="item in plateOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-          </el-select>
-        </el-tooltip> -->
+        <el-date-picker v-model="date" size="mini" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right" :default-time="['00:00:00', '23:59:59']">
+        </el-date-picker>
         <el-button type="primary" size="mini" class="query-btn item" @click="searchResource">查询</el-button>
-        <!-- <el-button size="mini" @click="batchExport">一键导出</el-button> -->
-        <el-button size="mini" @click="batchChangeStatus(1)">一键启用</el-button>
-        <el-button size="mini" @click="batchChangeStatus(0)">一键停用</el-button>
         <el-button size="mini" @click="batchDelete">一键删除</el-button>
       </div>
 
@@ -91,16 +76,10 @@
             <el-tooltip effect="light" :open-delay="500" content="查看详情" placement="top">
               <i class="action-item el-icon-zoom-in" @click="queryResourceDetails(scope.row)"></i>
             </el-tooltip>
-            <el-tooltip effect="light" :open-delay="500" :content="scope.row.status == '1' || scope.row.status == '3' ? '停用' : '启用'" placement="top">
-              <i
-                :class="scope.row.status == '1' || scope.row.status == '3' ? 'action-item el-icon-video-pause' : 'action-item el-icon-video-play'"
-                @click="changeStatus(scope.row, scope.row.status == '1' || scope.row.status == '3' ? '0' : '1')"
-              ></i>
+            <el-tooltip effect="light" :open-delay="500" content="编辑" placement="top">
+              <i class="action-item el-icon-edit" @click="editResource(scope.row)"></i>
             </el-tooltip>
-            <el-tooltip effect="light" :open-delay="500" content="编辑" placement="top" v-show="scope.row.status == 0">
-              <i class="action-item el-icon-edit" @click="editRule(scope.row)"></i>
-            </el-tooltip>
-            <el-tooltip effect="light" :open-delay="500" content="删除" placement="top" v-show="scope.row.status == 0">
+            <el-tooltip effect="light" :open-delay="500" content="删除" placement="top">
               <i class="action-item el-icon-delete" @click="deleteResource(scope.row)"></i>
             </el-tooltip>
           </template>
@@ -119,22 +98,21 @@
       >
       </el-pagination>
     </div>
-    <EditResource :visible.sync="editVisible" v-if="editVisible"></EditResource>
     <Details :visible.sync="resourceDetailsVisible" v-if="resourceDetailsVisible" :content="currentResource"></Details>
+    <Publish :visible.sync="dialogVisiblePublish" v-if="dialogVisiblePublish" :content="currentResource" :operateType="operateType"></Publish>
   </div>
 </template>
 
 <script>
-import EditResource from "@/views/resourceManage/EditResource.vue";
-import { queryResourceList } from "@/http/modules/resourceManage.js";
+import { queryResourceList, patchDeleteResource } from "@/http/modules/resourceManage.js";
 import Details from "@/views/resourceManage/Details.vue";
-import { formatDate } from "@/utils/format.js";
+import Publish from "@/views/resourceManage/Publish";
+import { formatDate, formatDate1 } from "@/utils/format.js";
 export default {
-  name: "content-recommend",
+  name: "ResourceManage",
   props: {},
   data() {
     return {
-      editResourceVisible: false,
       resourceDetailsVisible: false,
       statusOptions: [
         { label: "资源状态", value: null },
@@ -149,6 +127,37 @@ export default {
         { label: "自建资源", value: "2" },
         { label: "微课", value: "3" },
       ],
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+        ],
+      },
       statusMaps: { 0: "草稿", 1: "已发布", 2: "推荐" },
       typeMaps: { 0: "视频", 1: "电子书", 2: "自建资源", 3: "微课" },
       keyWord: null,
@@ -160,16 +169,17 @@ export default {
       status: null,
       type: null,
       rule_plate: null,
-      currentResourceId: null,
       currentResource: null,
       isLoading: false,
       selectedResources: [],
-      editVisible: false,
+      operateType: "0",
+      date: null,
+      dialogVisiblePublish: false,
     };
   },
   components: {
-    EditResource,
     Details,
+    Publish,
   },
   created() {
     console.log(123);
@@ -188,12 +198,15 @@ export default {
         this.searchResource();
       }
     },
+    dialogVisiblePublish(cur) {
+      if (!cur) {
+        this.searchResource();
+      }
+    },
   },
   methods: {
     formatDate: formatDate,
-    test() {
-      this.editResourceVisible = true;
-    },
+    test() {},
     handleTableSelect(list) {
       this.selectedResources = [];
       list &&
@@ -215,7 +228,12 @@ export default {
       this.searchResource();
     },
     async searchResource() {
-      let re = await queryResourceList({ keyWord: this.keyWord, status: this.status, type: this.type, pageNum: this.currentPage, pageSize: this.pageSize });
+      console.log(this.date);
+      if (this.date && this.date.length) {
+        this.date[0] = formatDate1(this.date[0]);
+        this.date[1] = formatDate1(this.date[1]);
+      }
+      let re = await queryResourceList({ keyWord: this.keyWord, status: this.status, type: this.type, pageNum: this.currentPage, pageSize: this.pageSize, date: this.date });
       this.tableData = re.list && re.list.length ? [...re.list] : [];
       this.total = re.total;
     },
@@ -233,19 +251,28 @@ export default {
      * @param {*} rule：规则对象
      * @return {*}
      */
-    editRule(resource) {
-      this.currentResourceId = resource.id;
-      this.editResourceVisible = true;
+    editResource(resource) {
+      this.currentResource = resource;
+      this.operateType = "1";
+      this.dialogVisiblePublish = true;
     },
-    createRule() {
-      this.editVisible = true;
+    createResource() {
+      this.operateType = "0";
+      this.currentResource = null;
+      this.dialogVisiblePublish = true;
     },
     queryResourceDetails(resource) {
       this.currentResource = resource;
       this.resourceDetailsVisible = true;
     },
-    deleteResource(node) {
-      console.log(node);
+    async deleteResource(node) {
+      let re = await patchDeleteResource([node.id]);
+      if (re) {
+        this.$message.success("删除成功");
+        this.searchResource();
+      } else {
+        this.$message.error("删除失败");
+      }
     },
     /**
      * @description: 批量删除
@@ -253,7 +280,28 @@ export default {
      * @return {*}
      */
     batchDelete() {
-      console.log(123);
+      this.selectedResources = this.$refs.rulesTable.selection;
+      if (!this.selectedResources || !this.selectedResources.length) {
+        this.$message.warning("请至少选择一个规则!");
+        return;
+      }
+      this.$confirm("是否确认删除选中规则?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
+        let ids = [];
+        this.selectedResources.map((item) => {
+          ids.push(item.id);
+        });
+        let re = await patchDeleteResource(ids);
+        if (re) {
+          this.$message.success("删除成功");
+          this.searchResource();
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
     },
     /**
      * @description: 启动或者停用 规则
@@ -262,25 +310,6 @@ export default {
      */
     changeStatus(node, status) {
       this.$confirm(`是否确认${status == "0" ? "停用" : "启用"}规则?`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(async () => {
-        console.log(123);
-      });
-    },
-    /**
-     * @description:批量启动或者停用 规则
-     * @param {*} status：0：启用，1：停用
-     * @return {*}
-     */
-    batchChangeStatus(status) {
-      this.selectedResources = this.$refs.rulesTable.selection;
-      if (!this.selectedResources || !this.selectedResources.length) {
-        this.$message.warning("请至少选择一个规则!");
-        return;
-      }
-      this.$confirm(`是否确认${status == "0" ? "停用" : "启用"}选中规则?`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -301,7 +330,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.content-recommend {
+.resource-manage {
   height: calc(100% - 90px);
   overflow: hidden;
   .content-box {
@@ -360,7 +389,7 @@ export default {
 }
 </style>
 <style lang="scss">
-.content-recommend {
+.resource-manage {
   .input-with-select {
     width: 255px;
     .el-input-group__append {

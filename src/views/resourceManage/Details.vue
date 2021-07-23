@@ -1,10 +1,10 @@
 <!--
  * @Author: your name
  * @Date: 2021-05-24 18:49:09
- * @LastEditTime: 2021-07-16 20:45:00
+ * @LastEditTime: 2021-07-19 10:11:42
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
- * @FilePath: \ewp_contentoperation\src\views\contentResourceManage\Publish.vue
+ * @FilePath: \ewp_contentoperation\src\views\resourceManage\Publish.vue
 -->
 <template>
   <div>

@@ -29,8 +29,6 @@ import Preview from "@/views/resourceManage/Preview.vue";
 import Publish from "@/views/resourceManage/Publish";
 import InsertImage from "@/views/resourceManage/InsertImage.vue";
 import { toolbarTips } from "@/utils/constant";
-
-import { replaceTextContent } from "@/utils/conmponentFuncs";
 // let fonts = ["PingFang", "SimHei", "KaiTi", "Helvetica", "FangSong", "Arial", "Times-New-Roman", "sans-serif"];
 let fonts = ["Helvetica", "PingFang", "FangSong", "Times-New-Roman", "sans-serif"];
 var Font = Quill.import("formats/font");
@@ -126,7 +124,7 @@ export default {
   watch: {
     isEditing(cur) {
       if (cur) {
-        this.content = replaceTextContent(this.currentResource.content, true) || "";
+        this.content = this.currentResource.content;
       } else {
         this.content = "";
       }

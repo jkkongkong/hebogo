@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-05-17 19:22:53
- * @LastEditTime: 2021-07-16 14:49:36
+ * @LastEditTime: 2021-07-19 17:02:05
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \vue2-bucket\vue.config.ts
@@ -23,16 +23,16 @@ module.exports = {
       warnings: false,
       errors: true,
     },
-    proxy: {
-      "/ecpJson.action": {
-        target: config.baseURL,
-        changeOrigin: true,
-        ws: true,
-        // pathRewrite: {
-        //   "^/api": "",
-        // },
-      },
-    },
+    // proxy: {
+    //   "/": {
+    //     target: "/",
+    //     changeOrigin: true,
+    //     ws: true,
+    //     // pathRewrite: {
+    //     //   "^/api": "",
+    //     // },
+    //   },
+    // },
   },
   chainWebpack: (config) => {
     config.resolve.alias.set("@", resolve("src")).set("assets", resolve("src/assets")).set("components", resolve("src/components")).set("base", resolve("baseConfig")).set("public", resolve("public"));

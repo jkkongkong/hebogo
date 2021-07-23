@@ -1,10 +1,10 @@
 <!--
  * @Author: your name
  * @Date: 2021-06-17 09:39:27
- * @LastEditTime: 2021-07-06 15:46:17
+ * @LastEditTime: 2021-07-19 10:05:02
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
- * @FilePath: \ewp_contentoperation\src\views\contentResourceManage\EditResource.vue
+ * @FilePath: \ewp_contentoperation\src\views\resourceManage\EditResource.vue
 -->
 <template>
   <div>
@@ -27,8 +27,18 @@ export default {
   data() {
     return {};
   },
-  computed: {},
-  watch: {},
+  computed: {
+    isEditing() {
+      return this.$store.getters.isEditing;
+    },
+  },
+  watch: {
+    isEditing(cur) {
+      if (!cur) {
+        this.closeDialog();
+      }
+    },
+  },
   mounted() {
     console.log(123);
   },
